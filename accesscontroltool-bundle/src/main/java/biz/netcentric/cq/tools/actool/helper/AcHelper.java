@@ -54,7 +54,7 @@ public class AcHelper {
     public static int PRINCIPAL_BASED_ORDER = 1;
     public static int PATH_BASED_ORDER = 2;
 
-    public static AceBean getAceBean(final AceWrapper ace)
+    public static AceBean getAceBean(final AceWrapper ace, final String[] restrictionNames)
             throws ValueFormatException, IllegalStateException,
             RepositoryException {
         AceBean aceBean = new AceBean();
@@ -63,10 +63,18 @@ public class AcHelper {
         aceBean.setJcrPath(ace.getJcrPath());
         aceBean.setPrincipal(ace.getPrincipal().getName());
         aceBean.setPrivilegesString(ace.getPrivilegesString());
-        aceBean.setRepGlob(ace.getRestrictionAsString("rep:glob"));
-
+        aceBean.setRestrictionsMap(getRestrictionsMap(ace, restrictionNames));
         return aceBean;
     }
+
+	private static Map<String, String> getRestrictionsMap(final AceWrapper ace, final String[] restrictionNames)
+			throws RepositoryException {
+		Map <String, String> restrictionsMap = new HashMap<String, String>();
+        for(String restrictionName : restrictionNames){
+        	restrictionsMap.put(restrictionName, ace.getRestrictionAsString(restrictionName));
+        }
+		return restrictionsMap;
+	}
 
     public static String getBlankString(final int nrOfBlanks) {
         return StringUtils.repeat(" ", nrOfBlanks);

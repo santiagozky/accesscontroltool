@@ -49,6 +49,7 @@ import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlEntry;
+import org.apache.jackrabbit.api.security.JackrabbitAccessControlManager;
 import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.apache.jackrabbit.api.security.user.Group;
 import org.apache.jackrabbit.api.security.user.Query;
@@ -56,6 +57,7 @@ import org.apache.jackrabbit.api.security.user.QueryBuilder;
 import org.apache.jackrabbit.api.security.user.QueryBuilder.Direction;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.oak.spi.security.authorization.restriction.RestrictionProvider;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.LoginException;
@@ -676,14 +678,16 @@ public class DumpserviceImpl implements Dumpservice {
             if (aclBean.getAcl() == null) {
                 continue;
             }
-
+            
             for (AccessControlEntry ace : aclBean.getAcl()
                     .getAccessControlEntries()) {
             	if (!(ace instanceof JackrabbitAccessControlEntry)) {
             		throw new IllegalStateException("AC entry is not a JackrabbitAccessControlEntry: " + ace);
             	}
+            
+            			
                 AceWrapper tmpBean = new AceWrapper((JackrabbitAccessControlEntry)ace, aclBean.getJcrPath());
-                AceBean tmpAceBean = AcHelper.getAceBean(tmpBean);
+                AceBean tmpAceBean = AcHelper.getAceBean(tmpBean, aclBean.getAcl().getRestrictionNames());
 
                 Authorizable authorizable = um.getAuthorizable(tmpAceBean
                         .getPrincipalName());

@@ -8,6 +8,10 @@
  */
 package biz.netcentric.cq.tools.actool.dumpservice;
 
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
 import biz.netcentric.cq.tools.actool.authorizableutils.AuthorizableConfigBean;
 import biz.netcentric.cq.tools.actool.helper.AcHelper;
 import biz.netcentric.cq.tools.actool.helper.AceBean;
@@ -69,14 +73,38 @@ public class AcDumpElementYamlVisitor implements AcDumpElementVisitor {
         sb.append(AcHelper.getBlankString(DUMP_INDENTATION_PROPERTY))
                 .append("privileges: " + aceBean.getPrivilegesString())
                 .append("\n");
-        sb.append(AcHelper.getBlankString(DUMP_INDENTATION_PROPERTY)).append(
-                "repGlob: ");
-        if ((aceBean.getRepGlob() != null)) {
-            sb.append("'" + aceBean.getRepGlob() + "'");
-        }
+        
+        appendRestrictions(aceBean);
+                
         sb.append("\n");
         sb.append("\n");
     }
+
+	private void appendRestrictions(final AceBean aceBean) {
+		Map<String, String> restrictionsMap = aceBean.getRestrictionsMap();
+		for(String restrictionName : restrictionsMap.keySet()){
+			final String restrictionValue = restrictionsMap.get(restrictionName);
+        	if(restrictionValue != null){
+        		restrictionName = getCamelCaseRestrictionName(restrictionName);
+        		sb.append(AcHelper.getBlankString(DUMP_INDENTATION_PROPERTY))
+                .append(restrictionName + ": " + "'" + restrictionValue  + "'")
+                .append("\n");
+        	}
+        }
+	}
+	
+    /**
+     * gets rid of the colon (':') and returns a camel case version of the actual restriction name for usage in yaml file (e.g. rep:glob -> regGlob) since
+     * colon is a special yaml character
+     * @param restrictionName actual restriction name
+     * @return camel case version
+     */
+	private String getCamelCaseRestrictionName(String restrictionName) {
+		String[] restrictionNamePartialStrings = restrictionName.split(":");
+		restrictionNamePartialStrings[1] = restrictionNamePartialStrings[1].substring(0, 1).toUpperCase() +  restrictionNamePartialStrings[1].substring(1);
+		restrictionName = restrictionNamePartialStrings[0] + restrictionNamePartialStrings[1];
+		return restrictionName;
+	}
 
     @Override
     public void visit(final CommentingDumpElement commentingDumpElement) {

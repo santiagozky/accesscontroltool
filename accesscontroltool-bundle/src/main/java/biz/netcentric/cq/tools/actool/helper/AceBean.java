@@ -11,6 +11,7 @@ package biz.netcentric.cq.tools.actool.helper;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +28,6 @@ import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import biz.netcentric.cq.tools.actool.dumpservice.AcDumpElement;
 import biz.netcentric.cq.tools.actool.dumpservice.AcDumpElementVisitor;
 import biz.netcentric.cq.tools.actool.installationhistory.AcInstallationHistoryPojo;
-
 import com.day.cq.security.util.CqActions;
 
 /**
@@ -41,16 +41,25 @@ import com.day.cq.security.util.CqActions;
  */
 public class AceBean implements AcDumpElement {
 
-    private String jcrPath;
-    private String repGlob;
+    private static final String RESTRICTION_REP_GLOB = "rep:glob";
+	private String jcrPath;
     private String actionsStringFromConfig;
     private String privilegesString;
     private String principal;
     private String permission;
     private String[] actions;
     private String assertedExceptionString;
+    private Map<String, String> restrictionsMap = new HashMap<String, String>();
+    
+    public Map<String, String> getRestrictionsMap() {
+		return restrictionsMap;
+	}
 
-    public String getAssertedExceptionString() {
+	public void setRestrictionsMap(final Map<String, String> restrictionsMap) {
+		this.restrictionsMap = restrictionsMap;
+	}
+
+	public String getAssertedExceptionString() {
         return assertedExceptionString;
     }
 
@@ -92,11 +101,11 @@ public class AceBean implements AcDumpElement {
     }
 
     public String getRepGlob() {
-        return repGlob;
+        return this.restrictionsMap.get(RESTRICTION_REP_GLOB);
     }
 
     public void setRepGlob(String repGlob) {
-        this.repGlob = repGlob;
+       this.restrictionsMap.put(RESTRICTION_REP_GLOB, repGlob);
     }
 
     public String getActionsString() {
@@ -139,84 +148,81 @@ public class AceBean implements AcDumpElement {
 
     public void setPrivilegesString(String privilegesString) {
         this.privilegesString = privilegesString;
-    }
+    } 
 
     @Override
-    public String toString() {
-        return "AceBean [jcrPath=" + jcrPath + "\n" + ", permission=" + permission
-                + "\n" + ", repGlob=" + repGlob + "\n" + ", actionsString="
-                + actionsStringFromConfig + "\n" + ", privilegesString="
-                + privilegesString + "\n" + ", principal=" + principal + "\n"
-                + ", actions=" + Arrays.toString(actions) + "]";
-    }
+	public String toString() {
+		return "AceBean [jcrPath=" + jcrPath + ", actionsStringFromConfig=" + actionsStringFromConfig
+				+ ", privilegesString=" + privilegesString + ", principal=" + principal + ", permission=" + permission
+				+ ", actions=" + Arrays.toString(actions) + ", assertedExceptionString=" + assertedExceptionString
+				+ ", restrictionsMap=" + restrictionsMap + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(actions);
-        result = prime
-                * result
-                + ((actionsStringFromConfig == null) ? 0
-                        : actionsStringFromConfig.hashCode());
-        result = prime * result + ((jcrPath == null) ? 0 : jcrPath.hashCode());
-        result = prime * result
-                + ((permission == null) ? 0 : permission.hashCode());
-        result = prime * result
-                + ((principal == null) ? 0 : principal.hashCode());
-        result = prime
-                * result
-                + ((privilegesString == null) ? 0 : privilegesString.hashCode());
-        result = prime * result + ((repGlob == null) ? 0 : repGlob.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(actions);
+		result = prime * result + ((actionsStringFromConfig == null) ? 0 : actionsStringFromConfig.hashCode());
+		result = prime * result + ((assertedExceptionString == null) ? 0 : assertedExceptionString.hashCode());
+		result = prime * result + ((jcrPath == null) ? 0 : jcrPath.hashCode());
+		result = prime * result + ((permission == null) ? 0 : permission.hashCode());
+		result = prime * result + ((principal == null) ? 0 : principal.hashCode());
+		result = prime * result + ((privilegesString == null) ? 0 : privilegesString.hashCode());
+		result = prime * result + ((restrictionsMap == null) ? 0 : restrictionsMap.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AceBean other = (AceBean) obj;
-        if (!Arrays.equals(actions, other.actions))
-            return false;
-        if (actionsStringFromConfig == null) {
-            if (other.actionsStringFromConfig != null)
-                return false;
-        } else if (!actionsStringFromConfig
-                .equals(other.actionsStringFromConfig))
-            return false;
-        if (jcrPath == null) {
-            if (other.jcrPath != null)
-                return false;
-        } else if (!jcrPath.equals(other.jcrPath))
-            return false;
-        if (principal == null) {
-            if (other.principal != null)
-                return false;
-        } else if (!principal.equals(other.principal))
-            return false;
-        if (permission == null) {
-            if (other.permission != null)
-                return false;
-        } else if (!permission.equals(other.permission))
-            return false;
-        if (privilegesString == null) {
-            if (other.privilegesString != null)
-                return false;
-        } else if (!privilegesString.equals(other.privilegesString))
-            return false;
-        if (repGlob == null) {
-            if (other.repGlob != null)
-                return false;
-        } else if (!repGlob.equals(other.repGlob))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AceBean other = (AceBean) obj;
+		if (!Arrays.equals(actions, other.actions))
+			return false;
+		if (actionsStringFromConfig == null) {
+			if (other.actionsStringFromConfig != null)
+				return false;
+		} else if (!actionsStringFromConfig.equals(other.actionsStringFromConfig))
+			return false;
+		if (assertedExceptionString == null) {
+			if (other.assertedExceptionString != null)
+				return false;
+		} else if (!assertedExceptionString.equals(other.assertedExceptionString))
+			return false;
+		if (jcrPath == null) {
+			if (other.jcrPath != null)
+				return false;
+		} else if (!jcrPath.equals(other.jcrPath))
+			return false;
+		if (permission == null) {
+			if (other.permission != null)
+				return false;
+		} else if (!permission.equals(other.permission))
+			return false;
+		if (principal == null) {
+			if (other.principal != null)
+				return false;
+		} else if (!principal.equals(other.principal))
+			return false;
+		if (privilegesString == null) {
+			if (other.privilegesString != null)
+				return false;
+		} else if (!privilegesString.equals(other.privilegesString))
+			return false;
+		if (restrictionsMap == null) {
+			if (other.restrictionsMap != null)
+				return false;
+		} else if (!restrictionsMap.equals(other.restrictionsMap))
+			return false;
+		return true;
+	}
 
-    @Override
+	@Override
     public void accept(AcDumpElementVisitor acDumpElementVisitor) {
         acDumpElementVisitor.visit(this);
     }
@@ -281,7 +287,7 @@ public class AceBean implements AcDumpElement {
 			if (getRepGlob() != null) {
 				// is rep:glob supported?
 				for (String rName : acl.getRestrictionNames()) {
-					if ("rep:glob".equals(rName)) {
+					if (RESTRICTION_REP_GLOB.equals(rName)) {
 						Value v = session.getValueFactory().createValue(
 								getRepGlob(), acl.getRestrictionType(rName));
 						restrictions = Collections.singletonMap(rName, v);
