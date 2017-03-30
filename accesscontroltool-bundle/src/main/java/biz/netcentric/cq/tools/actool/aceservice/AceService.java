@@ -15,6 +15,8 @@ import biz.netcentric.cq.tools.actool.authorizableutils.AuthorizableInstallation
 import biz.netcentric.cq.tools.actool.installationhistory.AcInstallationHistoryPojo;
 
 public interface AceService {
+	
+	static final String ACTOOL_SERVICE="actool";
 
     /** Applies the full configuration as stored at the path configured at PID biz.netcentric.cq.tools.actool.aceservice.impl.AceServiceImpl
      * to the repository.

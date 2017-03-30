@@ -123,7 +123,7 @@ public class UploadListenerServiceImpl implements UploadListenerService,
     private void setEventListener() throws Exception {
         if (StringUtils.isNotBlank(this.configurationPath)) {
             try {
-                adminSession = repository.loginAdministrative(null);
+                adminSession = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
                 adminSession
                         .getWorkspace()

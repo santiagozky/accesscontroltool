@@ -219,7 +219,7 @@ public class YamlConfigReader implements ConfigReader {
         Session session = null;
         try {
             if (repository != null) {
-                session = repository.loginAdministrative(null);
+                session = repository.loginService(AceService.ACTOOL_SERVICE,null);
             }
             for (final Map<String, List<Map<String, ?>>> currentPrincipalAceMap : aceYamlList) {
 

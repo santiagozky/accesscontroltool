@@ -370,7 +370,7 @@ public class AceServiceImpl implements AceService {
 
         Session session = null;
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
             Set<String> principalsToRemoveAcesFor = getPrincipalNamesToRemoveAcesFor(acConfiguration.getAuthorizablesConfig());
             removeAcesForPathsNotInConfig(history, session, principalsToRemoveAcesFor, repositoryDumpAceMap,
@@ -471,7 +471,7 @@ public class AceServiceImpl implements AceService {
         // in case of an exception during the installation of the ACEs the
         // performed installation of authorizables from config
         // has to be reverted using the rollback method
-        Session authorizableInstallationSession = repository.loginAdministrative(null);
+        Session authorizableInstallationSession = repository.loginService(AceService.ACTOOL_SERVICE,null);
         try {
             // only save session if no exceptions occured
             AuthorizableInstallationHistory authorizableInstallationHistory = new AuthorizableInstallationHistory();
@@ -499,7 +499,7 @@ public class AceServiceImpl implements AceService {
 
         Session session = null;
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
             if (obsoleteAuthorizables.isEmpty()) {
                 history.addVerboseMessage("No obsolete authorizables configured");
@@ -601,7 +601,7 @@ public class AceServiceImpl implements AceService {
         String message = "";
         boolean flag = true;
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
             PurgeHelper.purgeAcl(session, path);
             session.save();
         } catch (Exception e) {
@@ -632,7 +632,7 @@ public class AceServiceImpl implements AceService {
         String message = "";
         boolean flag = true;
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
             message = PurgeHelper.purgeACLs(session, path);
             AcInstallationHistoryPojo history = new AcInstallationHistoryPojo();
             history.addMessage("purge method: purgeACLs()");
@@ -659,7 +659,7 @@ public class AceServiceImpl implements AceService {
         Session session = null;
         String message = "";
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
             Set<String> authorizabesFromConfigurations = getAllAuthorizablesFromConfig(session);
             message = purgeAuthorizables(authorizabesFromConfigurations,
@@ -686,7 +686,7 @@ public class AceServiceImpl implements AceService {
         String message = "";
         try {
             try {
-                session = repository.loginAdministrative(null);
+                session = repository.loginService(AceService.ACTOOL_SERVICE,null);
                 authorizableIds = authorizableIds.trim();
                 Set<String> authorizablesSet = new HashSet<String>(
                         new ArrayList(Arrays.asList(authorizableIds.split(","))));

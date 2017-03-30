@@ -38,7 +38,7 @@ public class LastRunSuccessHealthCheck implements HealthCheck {
         Session session = null;
 
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
             Node statisticsRootNode = HistoryUtils.getAcHistoryRootNode(session);
             NodeIterator it = statisticsRootNode.getNodes();

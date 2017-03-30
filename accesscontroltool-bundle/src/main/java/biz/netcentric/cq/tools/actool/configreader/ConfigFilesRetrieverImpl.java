@@ -46,7 +46,7 @@ public class ConfigFilesRetrieverImpl implements ConfigFilesRetriever {
 
         Session session = null;
         try {
-            session = repository.loginAdministrative(null);
+            session = repository.loginService(AceService.ACTOOL_SERVICE,null);
 
             Node rootNode = session.getNode(rootPath);
 
